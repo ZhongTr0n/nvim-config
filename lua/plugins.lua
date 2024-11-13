@@ -1,4 +1,3 @@
--- Bootstrap lazy.nvim
 local lazypath = vim.fn.stdpath("data") .. "/lazy/lazy.nvim"
 if not (vim.uv or vim.loop).fs_stat(lazypath) then
   local lazyrepo = "https://github.com/folke/lazy.nvim.git"
@@ -16,81 +15,100 @@ end
 vim.opt.rtp:prepend(lazypath)
 
 require("lazy").setup({
+  -- Gruvbox color scheme
   {
-	'ellisonleao/gruvbox.nvim',
-	config = function()
-	  vim.cmd.colorscheme("gruvbox")
-	  vim.g.gruvbox_contrast_dark = "soft"
-
-	end,
+    'ellisonleao/gruvbox.nvim',
+    config = function()
+      vim.cmd.colorscheme("gruvbox")
+      vim.g.gruvbox_contrast_dark = "soft"
+    end,
   },
+  -- Treesitter for syntax highlighting and text objects
   {
-	"nvim-treesitter/nvim-treesitter",
-	config = function()
-	  require("nvim-treesitter.configs").setup({
-		ensure_installed = {"c", "lua", "vim", "vimdoc", "query", "python", "javascript", "html", "css", "json" },
-
-		auto_install = true,
-		highlight = {
-		  enable = true,
-		},
-		incremental_selection = {
-		  enable = true,
-		  keymaps = {
-			init_selection = "<Leader>ss",
-			node_incremental = "<Leader>si",
-			scope_incremental = "<Leader>sc",
-			node_decremental = "<Leader>sd",
-		  },
-		},
-		 textobjects = {
-    select = {
-      enable = true,
-
-      -- Automatically jump forward to textobj, similar to targets.vim
-      lookahead = true,
-
-      keymaps = {
-        -- You can use the capture groups defined in textobjects.scm
-        ["af"] = "@function.outer",
-        ["if"] = "@function.inner",
-        ["ac"] = "@class.outer",
-        -- You can optionally set descriptions to the mappings (used in the desc parameter of
-        -- nvim_buf_set_keymap) which plugins like which-key display
-        ["ic"] = { query = "@class.inner", desc = "Select inner part of a class region" },
-        -- You can also use captures from other query groups like `locals.scm`
-        ["as"] = { query = "@local.scope", query_group = "locals", desc = "Select language scope" },
-      },
-      -- You can choose the select mode (default is charwise 'v')
-      --
-      -- Can also be a function which gets passed a table with the keys
-      -- * query_string: eg '@function.inner'
-      -- * method: eg 'v' or 'o'
-      -- and should return the mode ('v', 'V', or '<c-v>') or a table
-      -- mapping query_strings to modes.
-      selection_modes = {
-        ['@parameter.outer'] = 'v', -- charwise
-        ['@function.outer'] = 'V', -- linewise
-        ['@class.outer'] = '<c-v>', -- blockwise
-      },
-      -- If you set this to `true` (default is `false`) then any textobject is
-      -- extended to include preceding or succeeding whitespace. Succeeding
-      -- whitespace has priority in order to act similarly to eg the built-in
-      -- `ap`.
-      --
-      -- Can also be a function which gets passed a table with the keys
-      -- * query_string: eg '@function.inner'
-      -- * selection_mode: eg 'v'
-      -- and should return true or false
-      include_surrounding_whitespace = true,
-	},
+    "nvim-treesitter/nvim-treesitter",
+    config = function()
+      require("nvim-treesitter.configs").setup({
+        ensure_installed = { "c", "lua", "vim", "vimdoc", "query", "python", "javascript", "html", "css", "json" },
+        auto_install = true,
+        highlight = {
+          enable = true,
+        },
+      })
+    end,
   },
-	  })
-	end,
-  },
+  { "nvim-treesitter/nvim-treesitter-textobjects" },
+
+  -- Mason for LSP management
   {
-	"nvim-treesitter/nvim-treesitter-textobjects",
+    "williamboman/mason.nvim",
+    config = function()
+      require("mason").setup()
+    end,
+  },
+  
+  -- Mason-LSPConfig to manage LSP servers
+  {
+    "williamboman/mason-lspconfig.nvim",
+    config = function()
+      require("mason-lspconfig").setup {
+        ensure_installed = { "pyright", "ts_ls", "cssls", "html" }
+      }
+    end,
+  },
+  
+  -- LSP configurations
+  {
+    "neovim/nvim-lspconfig",
+    config = function()
+      local lspconfig = require("lspconfig")
+      
+      -- Enable snippet support for HTML and CSS
+      local capabilities = vim.lsp.protocol.make_client_capabilities()
+      capabilities.textDocument.completion.completionItem.snippetSupport = true
+
+      -- Setup LSP servers
+      lspconfig.pyright.setup {}
+      lspconfig.ts_ls.setup {}
+      lspconfig.html.setup {
+        capabilities = capabilities,  -- Enable snippet support
+      }
+      lspconfig.cssls.setup {
+        capabilities = capabilities,  -- Enable snippet support
+      }
+    end,
+  },
+
+  -- Completion plugins
+  {
+    "hrsh7th/nvim-cmp", -- Completion framework
+    dependencies = {
+      "hrsh7th/cmp-nvim-lsp", -- LSP completion source
+      "L3MON4D3/LuaSnip", -- Snippet engine
+      "saadparwaiz1/cmp_luasnip", -- Snippet completions
+    },
+    config = function()
+      local cmp = require("cmp")
+      local luasnip = require("luasnip")
+
+      cmp.setup({
+        snippet = {
+          expand = function(args)
+            luasnip.lsp_expand(args.body)
+          end,
+        },
+        mapping = cmp.mapping.preset.insert({
+          ["<C-b>"] = cmp.mapping.scroll_docs(-4),
+          ["<C-f>"] = cmp.mapping.scroll_docs(4),
+          ["<C-Space>"] = cmp.mapping.complete(),
+          ["<C-e>"] = cmp.mapping.abort(),
+          ["<CR>"] = cmp.mapping.confirm({ select = true }),
+        }),
+        sources = cmp.config.sources({
+          { name = "nvim_lsp" },
+          { name = "luasnip" },
+        }),
+      })
+    end,
   },
 })
-
 
