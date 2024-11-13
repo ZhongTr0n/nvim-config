@@ -20,6 +20,7 @@ vim.opt.clipboard = "unnamedplus"
 
 vim.opt.scrolloff = 5 
 
+vim.opt.swapfile = false
 
 -- Show whitespace characters
 vim.opt.list = true
