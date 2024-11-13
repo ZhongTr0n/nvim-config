@@ -16,13 +16,16 @@ vim.opt.rtp:prepend(lazypath)
 
 require("lazy").setup({
   -- Gruvbox color scheme
-  {
-    'ellisonleao/gruvbox.nvim',
-    config = function()
-      vim.cmd.colorscheme("gruvbox")
-      vim.g.gruvbox_contrast_dark = "soft"
-    end,
-  },
+   {
+      'sainnhe/gruvbox-material',
+      lazy = false,
+      priority = 1000,
+      config = function()
+        -- Optionally configure and load the colorscheme
+        vim.g.gruvbox_material_enable_italic = true
+        vim.cmd.colorscheme('gruvbox-material')
+      end
+    },
   -- Treesitter for syntax highlighting and text objects
   {
     "nvim-treesitter/nvim-treesitter",
@@ -37,6 +40,7 @@ require("lazy").setup({
     end,
   },
   { "nvim-treesitter/nvim-treesitter-textobjects" },
+
 
   -- Mason for LSP management
   {
@@ -107,6 +111,29 @@ require("lazy").setup({
           { name = "nvim_lsp" },
           { name = "luasnip" },
         }),
+      })
+    end,
+  },
+
+  -- Lualine status line plugin
+  {
+    "nvim-lualine/lualine.nvim",
+    dependencies = { "nvim-tree/nvim-web-devicons" }, -- optional, for file icons
+    config = function()
+      require("lualine").setup({
+        options = {
+          theme = 'gruvbox-material', -- Use the same theme as your colorscheme
+          section_separators = { left = '', right = '' },
+          component_separators = { left = '', right = '' },
+        },
+        sections = {
+          lualine_a = {'mode'},
+          lualine_b = {'branch', 'diff', 'diagnostics'},
+          lualine_c = {'filename', {'%f'}},  -- Show full path
+          lualine_x = {'encoding', 'filetype'},
+          lualine_y = {'progress'},
+          lualine_z = {'location'}
+        }
       })
     end,
   },

@@ -40,6 +40,8 @@ vim.opt.ruler = true  -- Show cursor position in the status line
 
 -- Set custom ruler format
 vim.opt.rulerformat = "%55(%{strftime('%a\\ %b\\ %e\\ %I:%M\\ %p')}\\ %5l,%-6(%c%V%)\\ %P%)"
+vim.o.statusline = "%f %y %m %=%{expand('%:p:h')}"
+
 
 -- Disable visual bells
 vim.opt.visualbell = false
