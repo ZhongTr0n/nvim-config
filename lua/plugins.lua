@@ -1,7 +1,6 @@
 -- ========================================
 -- Lazy.nvim Bootstrap
 -- ========================================
-
 local lazypath = vim.fn.stdpath("data") .. "/lazy/lazy.nvim"
 if not (vim.uv or vim.loop).fs_stat(lazypath) then
   local lazyrepo = "https://github.com/folke/lazy.nvim.git"
@@ -33,30 +32,28 @@ require("lazy").setup({
     config = function()
       local alpha = require("alpha")
       local dashboard = require("alpha.themes.dashboard")
-
       -- Custom header text
       dashboard.section.header.val = {
-  "                                      @@@      @@@@@      @@@@           ",
-  "                                    @@---@@@@@*@@@@@*#@@@@---@@          ",
-  "                                    @@@=-@@@@@@@@@@@@@@@@@--@@@          ",
-  "                                      @@@===@@@@@@@@@@@   @@@@           ",
-  "                                       @@=*@=+@**@**@#-@@                ",
-  "                                      @@@@@@=+@**@**@#-@@@  @@           ",
-  "                                      @-:@@@=+@@@*@@@@@--@  @@           ",
-  "                                      @@@---@@@::@-:@@@@@:@@@@           ",
-  "                                      @@@@@@@@:::::::+@@@@**@@           ",
-  "                                      @@@*#@:::::::::::@@*@@@@           ",
-  "                                       @@@@@:::::::::::@@*@@             ",
-  "                                         ===@@@@@@@@@@@===               ",
-
-  "", -- Empty line for whitespace
-  "              ███████╗██╗░░██╗░█████╗░███╗░░██╗░██████╗░████████╗██████╗░░█████╗░███╗░░██╗",
-  "              ╚════██║██║░░██║██╔══██╗████╗░██║██╔════╝░╚══██╔══╝██╔══██╗██╔══██╗████╗░██║",
-  "              ░░███╔═╝███████║██║░░██║██╔██╗██║██║░░██╗░░░░██║░░░██████╔╝██║░░██║██╔██╗██║",
-  "              ██╔══╝░░██╔══██║██║░░██║██║╚████║██║░░╚██╗░░░██║░░░██╔══██╗██║░░██║██║╚████║",
-  "              ███████╗██║░░██║╚█████╔╝██║░╚███║╚██████╔╝░░░██║░░░██║░░██║╚█████╔╝██║░╚███║",
-  "              ╚══════╝╚═╝░░╚═╝░╚════╝░╚═╝░░╚══╝░╚═════╝░░░░╚═╝░░░╚═╝░░╚═╝░╚════╝░╚═╝░░╚══╝"
-  
+        "                                      @@@      @@@@@      @@@@           ",
+        "                                    @@---@@@@@*@@@@@*#@@@@---@@          ",
+        "                                    @@@=-@@@@@@@@@@@@@@@@@--@@@          ",
+        "                                      @@@===@@@@@@@@@@@   @@@@           ",
+        "                                       @@=*@=+@**@**@#-@@                ",
+        "                                      @@@@@@=+@**@**@#-@@@  @@           ",
+        "                                      @-:@@@=+@@@*@@@@@--@  @@           ",
+        "                                      @@@---@@@::@-:@@@@@:@@@@           ",
+        "                                      @@@@@@@@:::::::+@@@@**@@           ",
+        "                                      @@@*#@:::::::::::@@*@@@@           ",
+        "                                       @@@@@:::::::::::@@*@@             ",
+        "                                         ===@@@@@@@@@@@===               ",
+        "", -- Empty line for whitespace
+        "", -- Empty line for whitespace
+        "              ███████╗██╗░░██╗░█████╗░███╗░░██╗░██████╗░████████╗██████╗░░█████╗░███╗░░██╗",
+        "              ╚════██║██║░░██║██╔══██╗████╗░██║██╔════╝░╚══██╔══╝██╔══██╗██╔══██╗████╗░██║",
+        "              ░░███╔═╝███████║██║░░██║██╔██╗██║██║░░██╗░░░░██║░░░██████╔╝██║░░██║██╔██╗██║",
+        "              ██╔══╝░░██╔══██║██║░░██║██║╚████║██║░░╚██╗░░░██║░░░██╔══██╗██║░░██║██║╚████║",
+        "              ███████╗██║░░██║╚█████╔╝██║░╚███║╚██████╔╝░░░██║░░░██║░░██║╚█████╔╝██║░╚███║",
+        "              ╚══════╝╚═╝░░╚═╝░╚════╝░╚═╝░░╚══╝░╚═════╝░░░░╚═╝░░░╚═╝░░╚═╝░╚════╝░╚═╝░░╚══╝"
       }
 
       -- Buttons or other configurations
@@ -68,9 +65,16 @@ require("lazy").setup({
 
       -- Set the Alpha dashboard
       alpha.setup(dashboard.config)
+    -- Ensure Alpha only runs when no files or arguments are passed
+    vim.api.nvim_create_autocmd("VimEnter", {
+      callback = function()
+        -- Check if there are files or arguments passed
+        if #vim.fn.argv() == 0 and vim.bo.filetype == "" then
+          alpha.start(true)
+        end
+      end,
+    })
 
-      -- Automatically show the Alpha screen on startup
-      vim.cmd([[autocmd VimEnter * Alpha]])
     end
   },
 
@@ -97,16 +101,14 @@ require("lazy").setup({
         },
         extensions = {},
       })
-
-      -- Load extensions if any
-      -- require("telescope").load_extension("fzf")
     end
   },
 
   -- ========================================
   -- Color Scheme
   -- ========================================
-  {
+
+    {
     'sainnhe/gruvbox-material',
     lazy = false,
     priority = 1000,
@@ -225,15 +227,27 @@ require("lazy").setup({
         },
         sections = {
           lualine_a = {'mode'},
-          lualine_b = {'branch', 'diff', 'diagnostics'},
-          lualine_c = {'filename', {'%f'}},  -- Show full path
-          lualine_x = {'encoding', 'filetype'},
-          lualine_y = {'progress'},
-          lualine_z = {'location'}
-        }
+          lualine_b = {'branch', 'diff'},
+          lualine_c = {'filename'},
+          lualine_x = {'filetype', 'encoding', 'progress'},
+          lualine_y = {'location'},
+          lualine_z = {'hostname'},
+        },
       })
     end,
   },
 
 })
+
+-- ========================================
+-- General Settings
+-- ========================================
+vim.opt.number = true
+vim.opt.relativenumber = true
+vim.opt.hlsearch = true
+vim.opt.ignorecase = true
+vim.opt.smartcase = true
+vim.opt.mouse = "a" -- Enable mouse support
+vim.opt.termguicolors = true -- Enable true color support
+vim.opt.wrap = false -- Disable line wrapping
 
