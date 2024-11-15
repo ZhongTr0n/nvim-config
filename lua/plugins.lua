@@ -24,6 +24,86 @@ vim.opt.rtp:prepend(lazypath)
 require("lazy").setup({
 
   -- ========================================
+  -- Alpha.vim (Startup Screen)
+  -- ========================================
+  {
+    'goolord/alpha-nvim',
+    lazy = false,  -- This ensures the plugin is loaded immediately
+    priority = 1000,
+    config = function()
+      local alpha = require("alpha")
+      local dashboard = require("alpha.themes.dashboard")
+
+      -- Custom header text
+      dashboard.section.header.val = {
+  "                                      @@@      @@@@@      @@@@           ",
+  "                                    @@---@@@@@*@@@@@*#@@@@---@@          ",
+  "                                    @@@=-@@@@@@@@@@@@@@@@@--@@@          ",
+  "                                      @@@===@@@@@@@@@@@   @@@@           ",
+  "                                       @@=*@=+@**@**@#-@@                ",
+  "                                      @@@@@@=+@**@**@#-@@@  @@           ",
+  "                                      @-:@@@=+@@@*@@@@@--@  @@           ",
+  "                                      @@@---@@@::@-:@@@@@:@@@@           ",
+  "                                      @@@@@@@@:::::::+@@@@**@@           ",
+  "                                      @@@*#@:::::::::::@@*@@@@           ",
+  "                                       @@@@@:::::::::::@@*@@             ",
+  "                                         ===@@@@@@@@@@@===               ",
+
+  "", -- Empty line for whitespace
+  "              ███████╗██╗░░██╗░█████╗░███╗░░██╗░██████╗░████████╗██████╗░░█████╗░███╗░░██╗",
+  "              ╚════██║██║░░██║██╔══██╗████╗░██║██╔════╝░╚══██╔══╝██╔══██╗██╔══██╗████╗░██║",
+  "              ░░███╔═╝███████║██║░░██║██╔██╗██║██║░░██╗░░░░██║░░░██████╔╝██║░░██║██╔██╗██║",
+  "              ██╔══╝░░██╔══██║██║░░██║██║╚████║██║░░╚██╗░░░██║░░░██╔══██╗██║░░██║██║╚████║",
+  "              ███████╗██║░░██║╚█████╔╝██║░╚███║╚██████╔╝░░░██║░░░██║░░██║╚█████╔╝██║░╚███║",
+  "              ╚══════╝╚═╝░░╚═╝░╚════╝░╚═╝░░╚══╝░╚═════╝░░░░╚═╝░░░╚═╝░░╚═╝░╚════╝░╚═╝░░╚══╝"
+  
+      }
+
+      -- Buttons or other configurations
+      dashboard.section.buttons.val = {
+        dashboard.button("f", "  Find File", ":Telescope find_files<CR>"),
+        dashboard.button("r", "  Recent Files", ":Telescope oldfiles<CR>"),
+        dashboard.button("q", "  Quit Neovim", ":qa<CR>"),
+      }
+
+      -- Set the Alpha dashboard
+      alpha.setup(dashboard.config)
+
+      -- Automatically show the Alpha screen on startup
+      vim.cmd([[autocmd VimEnter * Alpha]])
+    end
+  },
+
+  -- ========================================
+  -- Telescope - Fuzzy Finder
+  -- ========================================
+  {
+    "nvim-telescope/telescope.nvim",
+    dependencies = { "nvim-lua/plenary.nvim" }, -- Required dependency for Telescope
+    config = function()
+      require("telescope").setup({
+        defaults = {
+          prompt_prefix = "> ",
+          selection_caret = "> ",
+          path_display = { "smart" },
+        },
+        pickers = {
+          find_files = {
+            theme = "dropdown", -- Display find_files in dropdown mode
+          },
+          live_grep = {
+            theme = "ivy", -- Display live_grep in ivy mode (bottom search panel)
+          },
+        },
+        extensions = {},
+      })
+
+      -- Load extensions if any
+      -- require("telescope").load_extension("fzf")
+    end
+  },
+
+  -- ========================================
   -- Color Scheme
   -- ========================================
   {
@@ -35,39 +115,6 @@ require("lazy").setup({
       vim.cmd.colorscheme('gruvbox-material')  -- Load color scheme
     end
   },
-
-  -- ========================================
--- Telescope - Fuzzy Finder
--- ========================================
-{
-  "nvim-telescope/telescope.nvim",
-  dependencies = { "nvim-lua/plenary.nvim" }, -- Required dependency for Telescope
-  config = function()
-    require("telescope").setup({
-      defaults = {
-        -- Configuration for Telescope's defaults
-        prompt_prefix = "> ",
-        selection_caret = "> ",
-        path_display = { "smart" },
-      },
-      pickers = {
-        find_files = {
-          theme = "dropdown", -- Display find_files in dropdown mode
-        },
-        live_grep = {
-          theme = "ivy", -- Display live_grep in ivy mode (bottom search panel)
-        },
-      },
-      extensions = {
-        -- Configure extensions here if you add any
-      },
-    })
-
-    -- Load Telescope extensions if needed (e.g., fzf, media_files)
-    -- require("telescope").load_extension("fzf")
-  end
-},
-
 
   -- ========================================
   -- Syntax Highlighting and Text Objects
@@ -189,3 +236,4 @@ require("lazy").setup({
   },
 
 })
+
