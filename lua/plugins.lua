@@ -60,6 +60,9 @@ require("lazy").setup({
       dashboard.section.buttons.val = {
         dashboard.button("f", "  Find File", ":Telescope find_files<CR>"),
         dashboard.button("r", "  Recent Files", ":Telescope oldfiles<CR>"),
+		dashboard.button("b", "  Bookmarks", ":Telescope marks<CR>"),
+		dashboard.button("c", "  Config init", ":e ~/.config/nvim/init.lua<CR>"),
+		dashboard.button("p", "  Config plugins", ":e ~/.config/nvim/lua/plugins.lua<CR>"),
         dashboard.button("q", "  Quit Neovim", ":qa<CR>"),
       }
 
