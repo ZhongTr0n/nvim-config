@@ -1,3 +1,7 @@
+-- ========================================
+-- Lazy.nvim Bootstrap
+-- ========================================
+
 local lazypath = vim.fn.stdpath("data") .. "/lazy/lazy.nvim"
 if not (vim.uv or vim.loop).fs_stat(lazypath) then
   local lazyrepo = "https://github.com/folke/lazy.nvim.git"
@@ -14,19 +18,60 @@ if not (vim.uv or vim.loop).fs_stat(lazypath) then
 end
 vim.opt.rtp:prepend(lazypath)
 
+-- ========================================
+-- Plugin Setup with Lazy.nvim
+-- ========================================
 require("lazy").setup({
-  -- Gruvbox color scheme
-   {
-      'sainnhe/gruvbox-material',
-      lazy = false,
-      priority = 1000,
-      config = function()
-        -- Optionally configure and load the colorscheme
-        vim.g.gruvbox_material_enable_italic = true
-        vim.cmd.colorscheme('gruvbox-material')
-      end
-    },
-  -- Treesitter for syntax highlighting and text objects
+
+  -- ========================================
+  -- Color Scheme
+  -- ========================================
+  {
+    'sainnhe/gruvbox-material',
+    lazy = false,
+    priority = 1000,
+    config = function()
+      vim.g.gruvbox_material_enable_italic = true
+      vim.cmd.colorscheme('gruvbox-material')  -- Load color scheme
+    end
+  },
+
+  -- ========================================
+-- Telescope - Fuzzy Finder
+-- ========================================
+{
+  "nvim-telescope/telescope.nvim",
+  dependencies = { "nvim-lua/plenary.nvim" }, -- Required dependency for Telescope
+  config = function()
+    require("telescope").setup({
+      defaults = {
+        -- Configuration for Telescope's defaults
+        prompt_prefix = "> ",
+        selection_caret = "> ",
+        path_display = { "smart" },
+      },
+      pickers = {
+        find_files = {
+          theme = "dropdown", -- Display find_files in dropdown mode
+        },
+        live_grep = {
+          theme = "ivy", -- Display live_grep in ivy mode (bottom search panel)
+        },
+      },
+      extensions = {
+        -- Configure extensions here if you add any
+      },
+    })
+
+    -- Load Telescope extensions if needed (e.g., fzf, media_files)
+    -- require("telescope").load_extension("fzf")
+  end
+},
+
+
+  -- ========================================
+  -- Syntax Highlighting and Text Objects
+  -- ========================================
   {
     "nvim-treesitter/nvim-treesitter",
     config = function()
@@ -41,31 +86,32 @@ require("lazy").setup({
   },
   { "nvim-treesitter/nvim-treesitter-textobjects" },
 
-
-  -- Mason for LSP management
+  -- ========================================
+  -- LSP Management
+  -- ========================================
   {
     "williamboman/mason.nvim",
     config = function()
       require("mason").setup()
     end,
   },
-  
-  -- Mason-LSPConfig to manage LSP servers
   {
     "williamboman/mason-lspconfig.nvim",
     config = function()
-      require("mason-lspconfig").setup {
+      require("mason-lspconfig").setup({
         ensure_installed = { "pyright", "ts_ls", "cssls", "html" }
-      }
+      })
     end,
   },
-  
-  -- LSP configurations
+
+  -- ========================================
+  -- LSP Configurations
+  -- ========================================
   {
     "neovim/nvim-lspconfig",
     config = function()
       local lspconfig = require("lspconfig")
-      
+
       -- Enable snippet support for HTML and CSS
       local capabilities = vim.lsp.protocol.make_client_capabilities()
       capabilities.textDocument.completion.completionItem.snippetSupport = true
@@ -82,12 +128,14 @@ require("lazy").setup({
     end,
   },
 
-  -- Completion plugins
+  -- ========================================
+  -- Completion Plugins
+  -- ========================================
   {
-    "hrsh7th/nvim-cmp", -- Completion framework
+    "hrsh7th/nvim-cmp",  -- Completion framework
     dependencies = {
-      "hrsh7th/cmp-nvim-lsp", -- LSP completion source
-      "L3MON4D3/LuaSnip", -- Snippet engine
+      "hrsh7th/cmp-nvim-lsp",  -- LSP completion source
+      "L3MON4D3/LuaSnip",      -- Snippet engine
       "saadparwaiz1/cmp_luasnip", -- Snippet completions
     },
     config = function()
@@ -115,14 +163,16 @@ require("lazy").setup({
     end,
   },
 
-  -- Lualine status line plugin
+  -- ========================================
+  -- Status Line
+  -- ========================================
   {
     "nvim-lualine/lualine.nvim",
-    dependencies = { "nvim-tree/nvim-web-devicons" }, -- optional, for file icons
+    dependencies = { "nvim-tree/nvim-web-devicons" }, -- Optional, for file icons
     config = function()
       require("lualine").setup({
         options = {
-          theme = 'gruvbox-material', -- Use the same theme as your colorscheme
+          theme = 'gruvbox-material',  -- Set lualine theme
           section_separators = { left = '', right = '' },
           component_separators = { left = '', right = '' },
         },
@@ -137,5 +187,5 @@ require("lazy").setup({
       })
     end,
   },
-})
 
+})
