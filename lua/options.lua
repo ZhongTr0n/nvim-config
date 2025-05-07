@@ -11,7 +11,10 @@ vim.opt.splitbelow = true           -- New horizontal splits open below the curr
 vim.opt.splitright = true           -- New vertical splits open to the right of the current window
 
 -- Text Wrapping
-vim.opt.wrap = false                -- Disable line wrapping
+vim.o.wrap = true
+vim.o.linebreak = true
+vim.o.breakindent = true
+
 
 -- Encoding
 vim.opt.encoding = "utf-8"          -- Set default file encoding to UTF-8

@@ -108,6 +108,23 @@ require("lazy").setup({
   },
 
   -- ========================================
+  -- Markdown Preview 
+  -- ========================================
+  --
+ {
+  "iamcco/markdown-preview.nvim",
+  build = "cd app && npm install", -- Build the plugin (install dependencies)
+  ft = { "markdown" }, -- Load only for markdown files
+  config = function()
+    vim.g.mkdp_auto_start = 0 -- Do not auto-start preview on markdown buffer open
+    vim.g.mkdp_auto_close = 1 -- Auto-close preview when buffer is closed
+    vim.g.mkdp_refresh_slow = 0 -- Refresh preview automatically when changes are saved
+    vim.g.mkdp_command_for_global = 1 -- Enable preview globally
+    vim.g.mkdp_open_to_the_world = 0 -- Preview only on localhost
+  end,
+},
+  
+  -- ========================================
   -- Color Scheme
   -- ========================================
 
